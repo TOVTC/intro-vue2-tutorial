@@ -1,10 +1,54 @@
-Vue.component('product-review', {
-    // the v-model directive offers two-way data binding
-    // it captures data properties in child components to be passed to parent components
+// to allow grandchild components to communicate with parent components, create a global channel through which the app communicates
+// this channel is a new Vue instance, and you can replace the this keyword with the eventBus declaration (see review object onSubmit())
+var eventBus = new Vue()
+
+Vue.component('product-tabs', {
+    props: {
+        reviews: {
+            type: Array,
+            required: true
+        }
+    },
     template:
-    // v-model binds the value of the input to a property name
-    // the .number modifier typecasts the value of the select field into an integer
-    // add an event listener to parent element to listen for form submission, don't forget to use the .prevent to prevent default
+    // bind an active tab class to display whcih tab is active
+    // the tabs component is a grandchild of the product component, so we will no longer be listening for form submissions here
+    `
+    <div>
+        <span
+            :class="{ activeTab: selectedTab === tab}"
+            class="tab"
+            v-for="(tab, index) in tabs"
+            :key="index"
+            @click="selectedTab = tab"
+        >
+        {{ tab }}
+        </span>
+        <div v-show="selectedTab==='Reviews'">
+            <h2>Reviews</h2>
+            <p v-if="!reviews.length">There are no reviews yet.</p>
+            <ul>
+                <li v-for="review in reviews">
+                    <p>{{ review.name }}</p>
+                    <p>Rating: {{ review.rating }}</p>
+                    <p>{{ review.review }}</p>
+                    <p>Recommended: {{ review.review }}</p>
+                </li>
+            </ul>
+        </div>
+
+        <product-review v-show="selectedTab==='Make a Review'"></product-review>
+    </div>
+    `,
+    data() {
+        return {
+            tabs: ['Reviews', 'Make a Review'],
+            selectedTab: 'Reviews'   
+        }
+    }
+})
+
+Vue.component('product-review', {
+    template:
     `
     <form class="review-form" @submit.prevent="onSubmit">
 
@@ -56,7 +100,6 @@ Vue.component('product-review', {
             rating: null,
             review: null,
             recommended: null,
-            // to catch errors to display in template
             errors: []
         }
     },
@@ -69,7 +112,7 @@ Vue.component('product-review', {
                     rating: this.rating,
                     recommended: this.recommended
                 }
-                this.$emit('review-submitted', productReview)
+                eventBus.$emit('review-submitted', productReview)
                 this.errors = []
                 this.name = null,
                 this.review = null,
@@ -116,7 +159,6 @@ Vue.component('product', {
         }
     },
     template: 
-    // you can also use the HTML 5 required attribute to provide an automatic error message if a field is not filled in
     `
     <div class="product">
         <div class="product-image">
@@ -141,20 +183,7 @@ Vue.component('product', {
         <button v-on:click="addToCart" :disabled="!inStock" :class="{disabledButton: !inStock}">Add to Cart</button>
         </div>
 
-        <div>
-            <h2>Reviews</h2>
-            <p v-if="!reviews.length">There are no reviews yet.</p>
-            <ul>
-                <li v-for="review in reviews">
-                    <p>{{ review.name }}</p>
-                    <p>Rating: {{ review.rating }}</p>
-                    <p>{{ review.review }}</p>
-                    <p>Recommended: {{ review.review }}</p>
-                </li>
-            </ul>
-        </div>
-
-        <product-review @review-submitted="addReview"></product-review>
+        <product-tabs :reviews="reviews"></product-tabs>        
 
     </div>
     `,
@@ -188,9 +217,7 @@ Vue.component('product', {
         updateProduct(index) {
             this.selectedVariant = index
         },
-        addReview(productReview) {
-            this.reviews.push(productReview)
-        }
+        // addReview method was removed because of eventBus
     },
     computed: {
         title() {
@@ -208,6 +235,14 @@ Vue.component('product', {
             }
             return 2.99
         }
+    },
+    // mounted is a lifecycle hook
+    // place here code that you want to run as soon as the app is mounted
+    // this replaces the addReview method
+    mounted() {
+        eventBus.$on('review-submitted', function(productReview) {
+            this.reviews.push(productReview)
+        })
     }
 })
 
