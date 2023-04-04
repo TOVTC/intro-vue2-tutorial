@@ -10,7 +10,11 @@
 <body>
     <div class="nav-bar"></div>
     <div id="app">
-        <product :premium="premium"></product>
+        <div class="cart">
+            <p>Cart({{ cart.length }})</p>
+        </div>
+        <!-- listen for the emitted event from the child element here to trigger event handler -->
+        <product :premium="premium" @add-to-cart="updateCart" @remove-from-cart="removeFromCart"></product>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="main.js"></script>

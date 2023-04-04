@@ -14,10 +14,6 @@ Vue.component('product-details', {
 })
 
 Vue.component('product', {
-    // pass in an options object
-    // each component has its own scope and receives variables from its parent component using props (a custom attribute)
-    // in order to receive props, a component must explicitly declare props it expects to receive using the props option
-    // using a props object allows access to Vue's built-in validation options (e.g. dataType, required?, set a default value, etc.)
     props: {
         premium: {
             type: Boolean,
@@ -25,7 +21,6 @@ Vue.component('product', {
         }
     },
     template: 
-    // templates can only have one root element, like in React, so wrap elements in a div
     `
     <div class="product">
         <div class="product-image">
@@ -48,15 +43,11 @@ Vue.component('product', {
             </div>
 
         <button v-on:click="addToCart" :disabled="!inStock" :class="{disabledButton: !inStock}">Add to Cart</button>
+        <button v-on:click="removeFromCart" :disabled="!inStock" :class="{disabledButton: !inStock}">Remove from Cart</button>
         </div>
 
-        <div class="cart">
-            <p>Cart({{ cart }})</p>
-        </div>
     </div>
     `,
-    // data is not itself an object, but a function that returns an object so that each component that shares this data
-    // isn't sharing the same object but a new data object being returned every time
     data() {
         return {
             brand: "Vue Mastery",
@@ -77,16 +68,20 @@ Vue.component('product', {
                     variantQuantity: 0
                 }
             ],
-            cart: 0,
         }
     },
     methods: {
         addToCart() {
-            this.cart += 1
+            // emit an event of the specified name to the parent component
+            // second argument is any parameter needed to be passed to the parent
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId)
         },
         updateProduct(index) {
             this.selectedVariant = index
         },
+        removeFromCart() {
+            this.$emit('remove-from-cart', this.variants[this.selectedVariant].variantId)
+        }
     },
     computed: {
         title() {
@@ -110,6 +105,21 @@ Vue.component('product', {
 var app = new Vue({
     el: '#app',
     data: {
-        premium: true
+        premium: true,
+        cart: []
+    },
+    methods: {
+        updateCart(id) {
+            this.cart.push(id)
+        },
+        removeFromCart(id) {
+            if (this.cart.length > 0) {
+                for (var i = this.cart.length - 1; i >= 0; i--) {
+                    if (this.cart[i] === id) {
+                        this.cart.splice(i, 1)
+                    }
+                }
+            }
+        }
     }
 })
