@@ -18,22 +18,24 @@
                 <h1>{{ product }}</h1>
                 <p v-if="inStock">In Stock</p>
                 <p v-else>Out of Stock</p>
-                
-                <!-- v-for acts as a for-loop to loop over provided collection (details array) each item (alias) -->
+
                 <ul>
                     <li v-for="detail in details">{{ detail }}</li>
                 </ul>
 
-                <!-- use dot notation for object literals -->
-                <!-- don't forget to bind a key to each item iterated in a loop -->
                 <div v-for="variant in variants" :key="variant.variantId">
-                    <p>{{ variant.variantColor }}</p>
+                    <!-- @ is shorthand for v-on event listener -->
+                    <p @mouseover="updateProduct(variant.variantImage)">{{ variant.variantColor }}</p>
                 </div>
+            </div>
+            
+            <!-- v-on directive adds an event listener for a specific event to execute the method in the expression -->
+            <button v-on:click="addToCart">Add to Cart</button>
 
-                <ul>
-                    <!-- double check if  -->
-                    <li v-for="(size, index) in sizes" :key="index">{{ size }}</li>
-                </ul>
+            <button v-on:click="removeFromCart">Remove from Cart</button>
+
+            <div class="cart">
+                <p>Cart({{ cart }})</p>
             </div>
         </div>
     </div>
