@@ -17,22 +17,45 @@
             <div class="product-info">
                 <h1>{{ product }}</h1>
                 <p v-if="inStock">In Stock</p>
-                <p v-else>Out of Stock</p>
+                <p v-else :class="{outOfStock: !inStock}">Out of Stock</p>
 
                 <ul>
                     <li v-for="detail in details">{{ detail }}</li>
                 </ul>
 
-                <div v-for="variant in variants" :key="variant.variantId">
-                    <!-- @ is shorthand for v-on event listener -->
-                    <p @mouseover="updateProduct(variant.variantImage)">{{ variant.variantColor }}</p>
+                <!-- use style-binding to set CSS property to our data value -->
+                <!-- use camelCasing or 'kebab-casing' if in quotes -->
+                <div v-for="variant in variants"
+                    :key="variant.variantId"
+                    class="color-box"
+                    :style="{backgroundColor: variant.variantColor}"
+                    @mouseover="updateProduct(variant.variantImage)"
+                >
                 </div>
+
+                <!-- sometimes it's cleaner to bind to a style object -->
+                <!-- style="color: red; backgroundColor: red; font-size: 13px" -->
+                <div class="color-box" :style="styleObject"></div>
+
+                <!-- you can bind multiple style objects via an array -->
+                <div class="color-box" :style="[styleObject, styleObject2]"></div>
             </div>
             
-            <!-- v-on directive adds an event listener for a specific event to execute the method in the expression -->
-            <button v-on:click="addToCart">Add to Cart</button>
+            <!-- can bind the disabled property and class if the item is not in stock -->
+            <button v-on:click="addToCart" :disabled="!inStock" :class="{disabledButton: !inStock}">Add to Cart</button>
 
-            <button v-on:click="removeFromCart">Remove from Cart</button>
+            <!-- you can also bind a class depending on whether an expression evaluates to true -->
+            <div class="color-box" :class="{active: activeClass, 'text-danger': errorClass}"></div>
+
+            <!-- you can also bind an object of classes like in style binding -->
+            <!-- because active is true in our object in main.js, active is added as a class, text-danger is not -->
+            <div class="color-box" :class="classObject"></div>
+
+            <!-- you can add an array of classes too -->
+            <div class="color-box" :class="[aClass, eClass]"></div>
+
+            <!-- or evaluate ternary -->
+            <div class="color-box" :class="[activeClass ? aClass: '']"></div>
 
             <div class="cart">
                 <p>Cart({{ cart }})</p>

@@ -18,7 +18,24 @@ var app = new Vue({
                 variantImage: './assets/images/vmSocks-blue-onWhite.jpg'
             }
         ],
-        cart: 0
+        cart: 0,
+        styleObject: {
+            color: 'red',
+            backgroundColor: 'red',
+            fontSize: '13px'
+        },
+        styleObject2: {
+            margin: '5px',
+            padding: '20px'
+        },
+        activeClass: true,
+        errorClass: false,
+        classObject: {
+            active: true,
+            'text-danger': false
+        },
+        aClass: 'active',
+        eClass: 'text-danger'
     },
     methods: {
         // triggered by event listener in html
@@ -28,10 +45,5 @@ var app = new Vue({
         updateProduct(variantImage) {
             this.image = variantImage
         },
-        removeFromCart() {
-            if (this.cart > 0) {
-                this.cart -= 1
-            }
-        }
     }
 })
