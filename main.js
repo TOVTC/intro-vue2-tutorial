@@ -2,48 +2,51 @@
 var app = new Vue({
     el: '#app',
     data: {
+        brand: "Vue Mastery",
         product: 'Socks',
-        image: './assets/images/vmSocks-green-onWhite.jpg',
-        inStock: true,
+        selectedVariant: 0,
         details: ["80% cotton", "20% polyester", "Gender-neutral"],
         variants: [
             {
                 variantId: 2234,
                 variantColor: 'green',
-                variantImage: './assets/images/vmSocks-green-onWhite.jpg'
+                onSale: false,
+                variantImage: './assets/images/vmSocks-green-onWhite.jpg',
+                variantQuantity: 10
             },
             {
                 variantId: 2235,
-                variantColor: "blue",
-                variantImage: './assets/images/vmSocks-blue-onWhite.jpg'
+                variantColor: 'blue',
+                onSale: true,
+                variantImage: './assets/images/vmSocks-blue-onWhite.jpg',
+                variantQuantity: 0
             }
         ],
         cart: 0,
-        styleObject: {
-            color: 'red',
-            backgroundColor: 'red',
-            fontSize: '13px'
-        },
-        styleObject2: {
-            margin: '5px',
-            padding: '20px'
-        },
-        activeClass: true,
-        errorClass: false,
-        classObject: {
-            active: true,
-            'text-danger': false
-        },
-        aClass: 'active',
-        eClass: 'text-danger'
     },
     methods: {
-        // triggered by event listener in html
         addToCart() {
             this.cart += 1
         },
-        updateProduct(variantImage) {
-            this.image = variantImage
+        updateProduct(index) {
+            this.selectedVariant = index
         },
+    },
+    computed: {
+        // computed properties are cached - their values are saved until their dependencies are changed
+        title() {
+            return this.brand + ' ' + this.product
+        },
+        image() {
+            return this.variants[this.selectedVariant].variantImage
+        },
+        inStock() {
+            return this.variants[this.selectedVariant].variantQuantity
+        },
+        onSale() {
+            if (this.variants[this.selectedVariant].onSale) {
+                return this.title + " is on sale!"
+            }
+        }
     }
 })

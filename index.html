@@ -15,47 +15,25 @@
                 <img :src="image">
             </div>
             <div class="product-info">
-                <h1>{{ product }}</h1>
+                <h1>{{ title }}</h1>
                 <p v-if="inStock">In Stock</p>
-                <p v-else :class="{outOfStock: !inStock}">Out of Stock</p>
+                <p v-else>Out of Stock</p>
 
                 <ul>
                     <li v-for="detail in details">{{ detail }}</li>
                 </ul>
 
-                <!-- use style-binding to set CSS property to our data value -->
-                <!-- use camelCasing or 'kebab-casing' if in quotes -->
-                <div v-for="variant in variants"
+                <div v-for="(variant, index) in variants"
                     :key="variant.variantId"
                     class="color-box"
                     :style="{backgroundColor: variant.variantColor}"
-                    @mouseover="updateProduct(variant.variantImage)"
+                    @mouseover="updateProduct(index)"
                 >
                 </div>
 
-                <!-- sometimes it's cleaner to bind to a style object -->
-                <!-- style="color: red; backgroundColor: red; font-size: 13px" -->
-                <div class="color-box" :style="styleObject"></div>
+                <p>{{ onSale }}</p>
 
-                <!-- you can bind multiple style objects via an array -->
-                <div class="color-box" :style="[styleObject, styleObject2]"></div>
-            </div>
-            
-            <!-- can bind the disabled property and class if the item is not in stock -->
             <button v-on:click="addToCart" :disabled="!inStock" :class="{disabledButton: !inStock}">Add to Cart</button>
-
-            <!-- you can also bind a class depending on whether an expression evaluates to true -->
-            <div class="color-box" :class="{active: activeClass, 'text-danger': errorClass}"></div>
-
-            <!-- you can also bind an object of classes like in style binding -->
-            <!-- because active is true in our object in main.js, active is added as a class, text-danger is not -->
-            <div class="color-box" :class="classObject"></div>
-
-            <!-- you can add an array of classes too -->
-            <div class="color-box" :class="[aClass, eClass]"></div>
-
-            <!-- or evaluate ternary -->
-            <div class="color-box" :class="[activeClass ? aClass: '']"></div>
 
             <div class="cart">
                 <p>Cart({{ cart }})</p>
