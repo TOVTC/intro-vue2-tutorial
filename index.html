@@ -16,19 +16,24 @@
             </div>
             <div class="product-info">
                 <h1>{{ product }}</h1>
-                <!-- use v-if and v-else to evaluate conditionals addition or removal of element to/from the DOM -->
                 <p v-if="inStock">In Stock</p>
                 <p v-else>Out of Stock</p>
+                
+                <!-- v-for acts as a for-loop to loop over provided collection (details array) each item (alias) -->
+                <ul>
+                    <li v-for="detail in details">{{ detail }}</li>
+                </ul>
 
-                <!-- use app.inventory in dev tools to update properties in real time -->
-                <p v-if="inventory > 10">In Stock</p>
-                <p v-else-if="inventory <=10 && inventory > 0">Almost sold out</p>
-                <p v-else>Out of Stock</p>
+                <!-- use dot notation for object literals -->
+                <!-- don't forget to bind a key to each item iterated in a loop -->
+                <div v-for="variant in variants" :key="variant.variantId">
+                    <p>{{ variant.variantColor }}</p>
+                </div>
 
-                <!-- v-show toggles visiibility off (display:none) an on to increase performance and avoid adding/removing elements -->
-                <p v-show="inventory <=10 && inventory > 0">Don't miss out</p>
-
-                <p v-if="onSale">On Sale</p>
+                <ul>
+                    <!-- double check if  -->
+                    <li v-for="(size, index) in sizes" :key="index">{{ size }}</li>
+                </ul>
             </div>
         </div>
     </div>
