@@ -2,6 +2,48 @@
 // this channel is a new Vue instance, and you can replace the this keyword with the eventBus declaration (see review object onSubmit())
 var eventBus = new Vue()
 
+Vue.component('shipping-detail-tabs', {
+    props: {
+        details: {
+            type: Array,
+            required: true
+        },
+        shipping: {
+            type: Boolean,
+            required: true
+        }
+    },
+    template:
+    `
+    <div>
+        <span
+            :class="{ activeTab: selectedTab === tab}"
+            class="tab"
+            v-for="(tab, index) in tabs"
+            :key="index"
+            @click="selectedTab = tab"
+        >
+        {{ tab }}
+        </span>
+
+        <p v-show="selectedTab ==='Shipping'">Shipping: {{ shipping }}</p>
+
+        <div v-show="selectedTab ==='Details'">
+            <p>Details: </p>
+            <ul>
+                <li v-for="detail in details">{{ detail }}</li>
+            </ul>
+        </div>
+    </div>
+    `,
+    data() {
+        return {
+            tabs: ['Shipping', 'Details'],
+            selectedTab: 'Shipping'   
+        }
+    }
+})
+
 Vue.component('product-tabs', {
     props: {
         reviews: {
@@ -10,7 +52,7 @@ Vue.component('product-tabs', {
         }
     },
     template:
-    // bind an active tab class to display whcih tab is active
+    // bind an active tab class to display which tab is active
     // the tabs component is a grandchild of the product component, so we will no longer be listening for form submissions here
     `
     <div>
@@ -23,7 +65,7 @@ Vue.component('product-tabs', {
         >
         {{ tab }}
         </span>
-        <div v-show="selectedTab==='Reviews'">
+        <div v-show="selectedTab ==='Reviews'">
             <h2>Reviews</h2>
             <p v-if="!reviews.length">There are no reviews yet.</p>
             <ul>
@@ -36,7 +78,7 @@ Vue.component('product-tabs', {
             </ul>
         </div>
 
-        <product-review v-show="selectedTab==='Make a Review'"></product-review>
+        <product-review v-show="selectedTab ==='Make a Review'"></product-review>
     </div>
     `,
     data() {
@@ -136,21 +178,6 @@ Vue.component('product-review', {
     }
 })
 
-Vue.component('product-details', {
-    props: {
-        details: {
-            type: Array,
-            required: true
-        }
-    },
-    template: 
-    `
-    <ul>
-        <li v-for="detail in details">{{ detail }}</li>
-    </ul>
-    `
-})
-
 Vue.component('product', {
     props: {
         premium: {
@@ -168,9 +195,8 @@ Vue.component('product', {
             <h1>{{ title }}</h1>
             <p v-if="inStock">In Stock</p>
             <p v-else>Out of Stock</p>
-            <p>Shipping: {{ shipping }}</p>
 
-            <product-details :details="details"></product-details>
+            <shipping-detail-tabs :details="details" :shipping="shipping"></shipping-detail-tabs>
 
             <div v-for="(variant, index) in variants"
                 :key="variant.variantId"
